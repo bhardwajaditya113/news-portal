@@ -66,8 +66,13 @@ return new class extends Migration
             $table->index(['is_trending', 'published_at']);
             $table->index(['is_breaking', 'published_at']);
             $table->index(['category_id', 'published_at']);
-            $table->fullText(['title', 'summary']);
         });
+
+        if (in_array(Schema::getConnection()->getDriverName(), ['mysql', 'mariadb'], true)) {
+            Schema::table('aggregated_news', function (Blueprint $table) {
+                $table->fullText(['title', 'summary']);
+            });
+        }
 
         // Analytics Table - For Comprehensive Tracking
         Schema::create('analytics', function (Blueprint $table) {
