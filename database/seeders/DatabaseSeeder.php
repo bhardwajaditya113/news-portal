@@ -12,7 +12,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Seed only news sources, others already exist
+        // Activate all roles and permissions
+        $this->call(ActivateAllRolesSeeder::class);
+        
+        // Seed news sources for real-time fetching
         $this->call(NewsSourceSeeder::class);
     }
 }
