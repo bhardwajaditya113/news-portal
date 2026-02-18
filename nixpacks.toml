@@ -16,4 +16,4 @@ nixPkgs = [
 ]
 
 [phases.release]
-cmd = "echo 'Skipping migrations in build'"
+cmds = ["echo 'Skipping migrations in build'"]
