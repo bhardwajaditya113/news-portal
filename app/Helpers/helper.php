@@ -19,14 +19,18 @@ function getLangauge(): string
     }else {
         try {
             $language = Language::where('default', 1)->first();
-            setLanguage($language->lang);
+            if ($language && $language->lang) {
+                setLanguage($language->lang);
 
-            return $language->lang;
+                return $language->lang;
+            }
         } catch (\Throwable $th) {
-            setLanguage('en');
-
-            return $language->lang;
+            // Fall through to default
         }
+
+        setLanguage('en');
+
+        return 'en';
     }
 }
 
