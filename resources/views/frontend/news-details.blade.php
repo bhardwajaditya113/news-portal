@@ -337,7 +337,7 @@
                     </div>
                 </div>
 
-                @if ($ad->view_page_ad_status == 1)
+                @if ($ad && $ad->view_page_ad_status == 1)
                 <div class="small_add_banner mb-5 pb-4">
                     <div class="small_add_banner_img">
                         <a href="{{ $ad->view_page_ad_url }}">
@@ -551,7 +551,7 @@
                         </div>
                     </aside>
 
-                    @if ($ad->side_bar_ad_status == 1)
+                    @if ($ad && $ad->side_bar_ad_status == 1)
                     <aside class="wrapper__list__article">
                         <h4 class="border_section">{{ __('frontend.Advertise') }}</h4>
                         <a href="{{ $ad->side_bar_ad_url }}">

@@ -232,7 +232,7 @@
                         </div>
                     </aside>
 
-                    @if ($ad->side_bar_ad_status == 1)
+                    @if ($ad && $ad->side_bar_ad_status == 1)
                     <aside class="wrapper__list__article">
                         <h4 class="border_section">{{ __('frontend.Advertise') }}</h4>
                         <a href="{{ $ad->side_bar_ad_url }}">
@@ -248,7 +248,7 @@
             <div class="clearfix"></div>
         </div>
     </div>
-    @if ($ad->news_page_ad_status == 1)
+    @if ($ad && $ad->news_page_ad_status == 1)
     <div class="large_add_banner my-4">
         <div class="container">
             <div class="row">
