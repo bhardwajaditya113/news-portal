@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\NewsApiController;
+use App\Http\Controllers\Api\NewsManagementController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -51,5 +52,22 @@ Route::prefix('v1')->group(function () {
 Route::middleware(['auth:sanctum', 'admin'])->prefix('v1/admin')->group(function () {
     // Real-time stats for dashboard
     Route::get('realtime-stats', [NewsApiController::class, 'realtimeStats']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| CRON Management Routes (with token authentication)
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('cron')->group(function () {
+    // Trigger news fetching
+    Route::post('fetch-news', [NewsManagementController::class, 'triggerFetch']);
+    
+    // Update trending topics
+    Route::post('update-trending', [NewsManagementController::class, 'updateTrending']);
+    
+    // Generate analytics
+    Route::post('generate-analytics', [NewsManagementController::class, 'generateAnalytics']);
 });
 
