@@ -1,0 +1,16 @@
+[phases.setup]
+# Force PHP 8.2 to support ReflectionFunction::isAnonymous
+nixPkgs = [
+  "php82",
+  "php82Packages.composer",
+  "php82Extensions.pdo_mysql",
+  "php82Extensions.mbstring",
+  "php82Extensions.openssl",
+  "php82Extensions.tokenizer",
+  "php82Extensions.xml",
+  "php82Extensions.curl",
+  "nginx",
+  "libmysqlclient",
+  "nodejs_18",
+  "npm-8_x"
+]
