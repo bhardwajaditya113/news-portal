@@ -8,6 +8,8 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use App\Models\NewsSource;
 use App\Models\AggregatedNews;
+use App\Models\Ad;
+use App\Models\FooterInfo;
 
 class ActivateAllRolesSeeder extends Seeder
 {
@@ -101,6 +103,47 @@ class ActivateAllRolesSeeder extends Seeder
 
         // Ensure all news sources are active
         NewsSource::query()->update(['is_active' => true]);
+
+        // Remove placeholder "test" content from ads
+        Ad::query()->where(function ($query) {
+            $query->where('home_top_bar_ad', 'test')
+                ->orWhere('home_middle_ad', 'test')
+                ->orWhere('view_page_ad', 'test')
+                ->orWhere('news_page_ad', 'test')
+                ->orWhere('side_bar_ad', 'test')
+                ->orWhere('home_top_bar_ad_url', 'test')
+                ->orWhere('home_middle_ad_url', 'test')
+                ->orWhere('view_page_ad_url', 'test')
+                ->orWhere('news_page_ad_url', 'test')
+                ->orWhere('side_bar_ad_url', 'test');
+        })->update([
+            'home_top_bar_ad' => null,
+            'home_middle_ad' => null,
+            'view_page_ad' => null,
+            'news_page_ad' => null,
+            'side_bar_ad' => null,
+            'home_top_bar_ad_status' => 0,
+            'home_middle_ad_status' => 0,
+            'view_page_ad_status' => 0,
+            'news_page_ad_status' => 0,
+            'side_bar_ad_status' => 0,
+            'home_top_bar_ad_url' => null,
+            'home_middle_ad_url' => null,
+            'view_page_ad_url' => null,
+            'news_page_ad_url' => null,
+            'side_bar_ad_url' => null,
+        ]);
+
+        // Remove placeholder "test" content from footer info
+        FooterInfo::query()->where(function ($query) {
+            $query->where('description', 'test')
+                ->orWhere('copyright', 'test')
+                ->orWhere('logo', '/test');
+        })->update([
+            'description' => null,
+            'copyright' => null,
+            'logo' => null,
+        ]);
 
         // Remove mock/seeded articles - keep only real-time aggregated news
         // Articles with no news_source_id are likely mock data

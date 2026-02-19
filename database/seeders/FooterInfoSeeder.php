@@ -16,9 +16,9 @@ class FooterInfoSeeder extends Seeder
         FooterInfo::updateOrCreate(
             ['language' => 'en'],
             [
-                'logo' => '/test',
-                'description' => 'test',
-                'copyright' => 'test'
+                'logo' => null,
+                'description' => null,
+                'copyright' => null
             ]
         );
 
