@@ -254,6 +254,10 @@ class HomeController extends Controller
 
     public function countView($news)
     {
+        if (!$news || !$news->id) {
+            return;
+        }
+
         if(session()->has('viewed_posts')){
             $postIds = session('viewed_posts');
 
