@@ -10,6 +10,7 @@ use App\Models\NewsSource;
 use App\Models\AggregatedNews;
 use App\Models\Ad;
 use App\Models\FooterInfo;
+use App\Models\Admin;
 
 class ActivateAllRolesSeeder extends Seeder
 {
@@ -18,87 +19,123 @@ class ActivateAllRolesSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create core roles if they don't exist
+        // Create core roles if they don't exist (admin guard)
         $roles = ['Super Admin', 'Admin', 'Editor', 'Author', 'Viewer'];
         
         foreach ($roles as $roleName) {
-            Role::firstOrCreate(['name' => $roleName]);
+            Role::firstOrCreate([
+                'name' => $roleName,
+                'guard_name' => 'admin',
+            ]);
         }
 
-        // Create all permissions if they don't exist
+        // Create all permissions used in admin UI if they don't exist
         $permissions = [
-            'create posts',
-            'edit posts',
-            'delete posts',
-            'view posts',
-            'publish posts',
-            'manage categories',
-            'manage users',
-            'manage roles',
-            'manage permissions',
-            'manage news sources',
-            'manage ads',
-            'manage settings',
-            'view reports',
-            'manage content',
+            // Category
+            'category index',
+            'category create',
+            'category udpate',
+            'category delete',
+
+            // News
+            'news index',
+            'news status',
+            'news all-access',
+
+            // Pages
+            'about index',
+            'contact index',
+            'conatact index',
+
+            // Social / Contact / Home
+            'social count index',
+            'contact message index',
+            'home section index',
+
+            // Ads / Subscribers / Footer
+            'advertisement index',
+            'subscribers index',
+            'footer index',
+
+            // Access management / Settings / Language
+            'access management index',
+            'setting index',
+            'languages index',
+
+            // Aggregator / Realtime (custom)
+            'news sources index',
+            'aggregated news index',
+            'realtime feed index',
         ];
 
         foreach ($permissions as $permissionName) {
-            Permission::firstOrCreate(['name' => $permissionName]);
+            Permission::firstOrCreate([
+                'name' => $permissionName,
+                'guard_name' => 'admin',
+            ]);
         }
 
         // Assign permissions to roles
-        $superAdminRole = Role::where('name', 'Super Admin')->first();
+        $superAdminRole = Role::where('name', 'Super Admin')->where('guard_name', 'admin')->first();
         if ($superAdminRole) {
-            $superAdminRole->syncPermissions(Permission::all());
+            $superAdminRole->syncPermissions(Permission::where('guard_name', 'admin')->get());
         }
 
-        $adminRole = Role::where('name', 'Admin')->first();
+        $adminRole = Role::where('name', 'Admin')->where('guard_name', 'admin')->first();
         if ($adminRole) {
             $adminRole->syncPermissions([
-                'create posts',
-                'edit posts',
-                'delete posts',
-                'view posts',
-                'publish posts',
-                'manage categories',
-                'manage users',
-                'manage news sources',
-                'manage ads',
-                'manage settings',
-                'manage content',
-                'view reports',
+                'category index',
+                'category create',
+                'category udpate',
+                'category delete',
+                'news index',
+                'news status',
+                'news all-access',
+                'about index',
+                'contact index',
+                'conatact index',
+                'social count index',
+                'contact message index',
+                'home section index',
+                'advertisement index',
+                'subscribers index',
+                'footer index',
+                'access management index',
+                'setting index',
+                'languages index',
+                'news sources index',
+                'aggregated news index',
+                'realtime feed index',
             ]);
         }
 
-        $editorRole = Role::where('name', 'Editor')->first();
+        $editorRole = Role::where('name', 'Editor')->where('guard_name', 'admin')->first();
         if ($editorRole) {
             $editorRole->syncPermissions([
-                'create posts',
-                'edit posts',
-                'delete posts',
-                'view posts',
-                'publish posts',
-                'manage categories',
-                'manage content',
+                'news index',
+                'news status',
+                'category index',
             ]);
         }
 
-        $authorRole = Role::where('name', 'Author')->first();
+        $authorRole = Role::where('name', 'Author')->where('guard_name', 'admin')->first();
         if ($authorRole) {
             $authorRole->syncPermissions([
-                'create posts',
-                'edit posts',
-                'view posts',
-                'manage content',
+                'news index',
             ]);
         }
 
-        $viewerRole = Role::where('name', 'Viewer')->first();
+        $viewerRole = Role::where('name', 'Viewer')->where('guard_name', 'admin')->first();
         if ($viewerRole) {
             $viewerRole->syncPermissions([
-                'view posts',
+                'news index',
             ]);
+        }
+
+        // Ensure primary admin has Super Admin role
+        $adminUser = Admin::where('email', 'admin@gmail.com')->first();
+        if ($adminUser && $superAdminRole) {
+            $adminUser->assignRole($superAdminRole);
         }
 
         // Ensure all news sources are active
