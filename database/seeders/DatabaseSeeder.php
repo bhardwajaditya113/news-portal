@@ -12,10 +12,16 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Activate all roles and permissions
+        // Seed core platform data
+        $this->call([
+            AdminSeeder::class,
+            LanguageSeeder::class,
+            FooterInfoSeeder::class,
+            AdSeeder::class,
+            NewsSourceSeeder::class,
+        ]);
+
+        // Activate all roles and permissions (keep at end)
         $this->call(ActivateAllRolesSeeder::class);
-        
-        // Seed news sources for real-time fetching
-        $this->call(NewsSourceSeeder::class);
     }
 }
