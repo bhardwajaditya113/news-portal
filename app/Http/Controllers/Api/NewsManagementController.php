@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Artisan;
+use App\Models\NewsSource;
+use App\Services\NewsAggregatorService;
 
 class NewsManagementController extends Controller
 {
@@ -23,6 +25,30 @@ class NewsManagementController extends Controller
         }
 
         try {
+            // Ensure default sources exist (production safety)
+            if (NewsSource::count() === 0) {
+                $defaults = NewsAggregatorService::getDefaultSources();
+                foreach ($defaults as $source) {
+                    NewsSource::updateOrCreate(
+                        ['slug' => $source['slug']],
+                        [
+                            'name' => $source['name'],
+                            'website_url' => $source['website_url'],
+                            'rss_feed_url' => $source['rss_feed_url'],
+                            'api_type' => $source['api_type'],
+                            'api_key' => $source['api_key'] ?? null,
+                            'category_mapping' => $source['category_mapping'],
+                            'country' => $source['country'],
+                            'language' => $source['language'],
+                            'priority' => $source['priority'],
+                            'credibility_score' => $source['credibility_score'],
+                            'fetch_interval' => $source['fetch_interval'] ?? 30,
+                            'is_active' => true,
+                        ]
+                    );
+                }
+            }
+
             // Run the fetch command
             Artisan::call('news:fetch', ['--all' => true]);
             $output = Artisan::output();
