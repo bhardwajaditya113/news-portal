@@ -1,19 +1,11 @@
 [phases.setup]
-# Force PHP 8.2 to support ReflectionFunction::isAnonymous
-nixPkgs = [
-  "php82",
-  "php82Packages.composer",
-  "php82Extensions.pdo_mysql",
-  "php82Extensions.mbstring",
-  "php82Extensions.openssl",
-  "php82Extensions.tokenizer",
-  "php82Extensions.xml",
-  "php82Extensions.curl",
-  "nginx",
-  "libmysqlclient",
-  "nodejs_18",
-  "npm-8_x"
-]
+nixPkgs = ['php82', 'php82Packages.composer']
 
-[phases.release]
-cmds = ["echo 'Skipping migrations in build'"]
+[phases.install]
+cmds = ['composer install --no-dev --optimize-autoloader']
+
+[phases.build]
+cmds = ['php artisan config:cache', 'php artisan route:cache', 'php artisan view:cache']
+
+[start]
+cmd = 'php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT'
